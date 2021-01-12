@@ -5,7 +5,7 @@ import "fmt"
 import "log"
 import "go.bug.st/serial"
 import "strings"
-import "strconv"
+//import "strconv"
 import "reflect"
 //import "sync"
 import "bufio"
@@ -39,7 +39,6 @@ func main() {
 		log.Fatal(err)
 	}
 	fmt.Println(reflect.TypeOf(port))
-	//moveSteps(10000,port)
 	
 	// Read and print the response
 	go readData(port)
@@ -51,70 +50,25 @@ func main() {
 func scanner(port serial.Port) {
 	scanner := bufio.NewScanner(os.Stdin)
 	for scanner.Scan() {
-	  //fmt.Println(scanner.Text())
-	  s := strings.Split(scanner.Text(),",")
-	  n, _ := strconv.Atoi(s[1])
-	//  ch, _ :=  scanner.Text()[0]
-	  //moveSteps(n,port)
-	    send(s[0], n, port)
-	// if (c == "m")
-	//	moveSteps(n,port)
-	// 
-	// else if (c == "u")
-	//	upDown(n,port)
-	// 
-	// else if (c == "s")
-	//	shiftRL(n,port)
-	// 
-	// else if (c == "r")
-	//	rotateRL(n,port)
-	 
+	  s := scanner.Text()
+
+	  if (string(s[0]) == "_") {
+		n, err := port.Write([]byte(s))
+		if err != nil {
+			log.Fatal(err)
+			fmt.Printf("this error")
+		}
+		fmt.Printf("Sent %v bytes\n", n)
+	  }else {
+		fmt.Printf("Enter right Format")
+	  }
+
+	//readData(port)
 
 	}
   }
-  func send(mode string, n int, port serial.Port)  {
-	 if (mode == "m"){
-		moveSteps(n,port)
-	 }else if (mode == "u"){
-		upDown(n,port)
-	 }else if (mode == "s"){
-		shiftRL(n,port)
-	 }else if (mode == "r"){
-		rotateRL(n,port)
-	 }
-		
-  }
 
-func moveSteps(dir int, port serial.Port){
-	n, err := port.Write([]byte(strconv.Itoa(dir)+","+strconv.Itoa(dir)+","+strconv.Itoa(dir)+","+strconv.Itoa(dir)+","+strconv.Itoa(0)))
-	if err != nil {
-		log.Fatal(err)
-	}
-	fmt.Printf("Sent %v bytes\n", n)
-}
 
-func upDown(dir int, port serial.Port){
-		n, err := port.Write([]byte(strconv.Itoa(0)+","+strconv.Itoa(0)+","+strconv.Itoa(0)+","+strconv.Itoa(0)+","+strconv.Itoa(dir)))
-		if err != nil {
-			log.Fatal(err)
-		}
-		fmt.Printf("Sent %v bytes\n", n)
-	}
-
-func shiftRL(dir int, port serial.Port){
-		n, err := port.Write([]byte(strconv.Itoa((-1*dir))+","+strconv.Itoa(dir)+","+strconv.Itoa(dir)+","+strconv.Itoa((-1*dir))+","+strconv.Itoa(0)))
-		if err != nil {
-			log.Fatal(err)
-		}
-		fmt.Printf("Sent %v bytes\n", n)
-	}
-func rotateRL(dir int, port serial.Port){
-		n, err := port.Write([]byte(strconv.Itoa((-1*dir))+","+strconv.Itoa(dir)+","+strconv.Itoa(-1*dir)+","+strconv.Itoa((dir))+","+strconv.Itoa(0)))
-		if err != nil {
-			log.Fatal(err)
-		}
-		fmt.Printf("Sent %v bytes\n", n)
-	}
 func readData(port serial.Port)  {
 	buff := make([]byte, 100)
 	for {
@@ -124,11 +78,11 @@ func readData(port serial.Port)  {
 			log.Fatal(err)
 		}
 		if n == 0 {
-			fmt.Println("\nEOF")
-			break
+		//	fmt.Println("\nEOF")
+		//	break
 		}
 
-		fmt.Printf("%s", string(buff[:n]))
+		fmt.Printf("GOTBack: %s \n", string(buff[:n]))
 
 		// If we receive a newline stop reading
 		if strings.Contains(string(buff[:n]), "0.00") {
