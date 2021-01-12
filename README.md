@@ -20,3 +20,7 @@ if you run into cannot find package “golang.org/x/sys/unix””error message
 
 # 4th 
 if the program runs without any error connect the RX pin of the pi to the TX pin of the Arduino
+
+# 5th 
+run code "_,64,m,1,3400"
+
